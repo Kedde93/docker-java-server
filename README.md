@@ -2,7 +2,7 @@
 
 First create a docker volume (For caching dependencies used by maven)
 
-`docker colume create --name maven-repo`
+`docker volume create --name maven-repo`
 
 # Build the image. 
 
