@@ -73,7 +73,7 @@ job(testJobName) {
         }
         shell('''\
                 cip=$(sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${testing_cid})
-                sudo docker run --rm rufus/siege-engine  -b -t60S http://$cip:8079/ > output 2>&1'''.stripIndent())
+                sudo docker run --rm rufus/siege-engine  -b -t60S http://$cip:8080/ > output 2>&1'''.stripIndent())
         shell('''\
                 avail=$(cat output | grep Availability | awk '{print $2}')
                 echo $avail
