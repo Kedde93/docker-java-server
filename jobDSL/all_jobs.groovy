@@ -65,7 +65,7 @@ job(testJobName) {
                 then
                     sudo docker rm -f testing-app
                 fi
-                testing_cid=$(sudo docker run -d -v maven-repo:/root/.m2 --name testing-app -p 8080:8079  $IMAGEID mvn jetty:run)
+                testing_cid=$(sudo docker run -d -v maven-repo:/root/.m2 --name testing-app -p 8080:8080  $IMAGEID mvn jetty:run)
                 sleep 30
                 echo "testing_cid=$testing_cid" > props.env'''.stripIndent())
         environmentVariables {
@@ -119,7 +119,7 @@ job(releaseJobName) {
                 then
                     sudo sudo docker rm -f deploy-app
                 fi
-                sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8000 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
+                sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8080 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
         shell('''
                 sudo docker ps |grep ${GITHUB_USERNAME}/http-app
                 sudo docker images |grep ${GITHUB_USERNAME}/http-app'''.stripIndent())
