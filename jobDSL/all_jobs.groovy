@@ -17,9 +17,9 @@ job(buildJobName) {
     steps {
         shell('''\
             echo "version=\$(cat version.txt)" > props.env
-            sudo docker build --no-cache -t ${GITHUB_USERNAME}/http-app:snapshot .
+            docker build --no-cache -t ${GITHUB_USERNAME}/http-app:snapshot .
             imageid=$(docker images | grep ${GITHUB_USERNAME}/http-app | grep snapshot | awk '{print $3}')
-            cid=$(sudo docker ps --filter="name=testing-app" -q -a)
+            cid=$(docker ps --filter="name=testing-app" -q -a)
             if [ ! -z "$cid" ]
             then
                 docker rm -f testing-app
