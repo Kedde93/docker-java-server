@@ -119,7 +119,7 @@ job(releaseJobName) {
                 then
                     docker rm -f deploy-app
                 fi
-                docker run -d --name deploy-app -p 8080:8000 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
+                docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8000 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
         shell('''\
                 docker ps |grep ${GITHUB_USERNAME}/http-app
                 docker images |grep ${GITHUB_USERNAME}/http-app'''.stripIndent())
