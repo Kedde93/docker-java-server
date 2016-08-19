@@ -92,10 +92,8 @@ job(testJobName) {
                 cid=$(sudo docker ps --filter="name=testing-app" -q -a)
                 if [ ! -z "$cid" ]
                 then
-                    sudo docker stop testing-app
-                    sudo docker rm -f testing-app
+                    sudo docker stop $cid
                 fi'''.stripIndent())
-
     }
     publishers {
         downstreamParameterized {
