@@ -31,7 +31,7 @@ job(buildJobName) {
             cat props.env
             cip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${cid})
             sleep 30
-            sudo docker run --rm rufus/siege-engine -g http://$cip:8001/
+            docker run --rm rufus/siege-engine -g http://$cip:8001/
             [ $? -ne 0 ] && exit 1
             docker kill ${cid}
             docker rm ${cid}'''.stripIndent())
