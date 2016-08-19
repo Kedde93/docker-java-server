@@ -113,7 +113,7 @@ job(releaseJobName) {
                 docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:latest
                 docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:$VERSION
                 # no git here yet
-                # sudo docker tag http-app/http-app:$(git describe)
+                # docker tag http-app/http-app:$(git describe)
                 cid=$(docker ps --filter="name=deploy-app" -q -a)
                 if [ ! -z "$cid" ]
                 then
