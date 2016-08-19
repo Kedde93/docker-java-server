@@ -82,10 +82,18 @@ job(testJobName) {
                 then
 	                echo "Availability high enough"
 	                sudo docker tag -f $IMAGEID ${GITHUB_USERNAME}/http-app:stable
+
 	                exit 0
                 else
 	                echo "Availability too low"
 	                exit 1
+                fi
+
+                cid=$(sudo docker ps --filter="name=testing-app" -q -a)
+                if [ ! -z "$cid" ]
+                then
+                    sudo docker stop testing-app
+                    sudo docker rm -f testing-app
                 fi'''.stripIndent())
 
     }
