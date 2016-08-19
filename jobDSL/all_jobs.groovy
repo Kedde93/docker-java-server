@@ -2,7 +2,7 @@
 // GITHUB_USERNAME="john-doe"
 
 projectName = "webserver"
-repositoryUrl = "https://github.com/${GITHUB_USERNAME}/gowebserver.git"
+repositoryUrl = "https://github.com/${GITHUB_USERNAME}/docker-java-server.git"
 
 buildJobName = "1.build-${projectName}_GEN"
 testJobName = "2.test-${projectName}_GEN"
