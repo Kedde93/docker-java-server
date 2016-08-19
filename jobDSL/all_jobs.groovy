@@ -87,12 +87,6 @@ job(testJobName) {
                 else
 	                echo "Availability too low"
 	                exit 1
-                fi
-
-                cid=$(sudo docker ps --filter="name=testing-app" -q -a)
-                if [ ! -z "$cid" ]
-                then
-                    sudo docker stop $cid
                 fi'''.stripIndent())
     }
     publishers {
@@ -123,6 +117,7 @@ job(releaseJobName) {
                 cid=$(sudo sudo docker ps --filter="name=deploy-app" -q -a)
                 if [ ! -z "$cid" ]
                 then
+                    sudo docker stop $cid
                     sudo sudo docker rm -f deploy-app
                 fi
                 sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8080 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
