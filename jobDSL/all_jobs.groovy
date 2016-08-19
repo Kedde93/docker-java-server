@@ -2,7 +2,7 @@
 // GITHUB_USERNAME="john-doe"
 
 projectName = "webserver"
-repositoryUrl = "https://github.com/${GITHUB_USERNAME}/docker-java-server.git"
+repositoryUrl = "https://github.com/${GITHUB_USERNAME}/sudo docker-java-server.git"
 
 buildJobName = "1.build-${projectName}_GEN"
 testJobName = "2.test-${projectName}_GEN"
@@ -17,24 +17,24 @@ job(buildJobName) {
     steps {
         shell('''\
             echo "version=\$(cat version.txt)" > props.env
-            docker build --no-cache -t ${GITHUB_USERNAME}/http-app:snapshot .
-            imageid=$(docker images | grep ${GITHUB_USERNAME}/http-app | grep snapshot | awk '{print $3}')
-            cid=$(docker ps --filter="name=testing-app" -q -a)
+            sudo docker build --no-cache -t ${GITHUB_USERNAME}/http-app:snapshot .
+            imageid=$(sudo docker images | grep ${GITHUB_USERNAME}/http-app | grep snapshot | awk '{print $3}')
+            cid=$(sudo docker ps --filter="name=testing-app" -q -a)
             if [ ! -z "$cid" ]
             then
-                docker rm -f testing-app
+                sudo docker rm -f testing-app
             fi
 
-            cid=$(docker run -d --name testing-app -v maven-repo:/root/.m2 -p 8080:8001 ${GITHUB_USERNAME}/http-app:snapshot mvn jetty:run) 
+            cid=$(sudo docker run -d --name testing-app -v maven-repo:/root/.m2 -p 8080:8001 ${GITHUB_USERNAME}/http-app:snapshot mvn jetty:run) 
             echo "cid=$cid" >> props.env
             echo "IMAGEID=$imageid" >> props.env
             cat props.env
-            cip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${cid})
+            cip=$(sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${cid})
             sleep 30
-            docker run --rm rufus/siege-engine -g http://$cip:8001/
+            sudo docker run --rm rufus/siege-engine -g http://$cip:8001/
             [ $? -ne 0 ] && exit 1
-            docker kill ${cid}
-            docker rm ${cid}'''.stripIndent())
+            sudo docker kill ${cid}
+            sudo docker rm ${cid}'''.stripIndent())
     }
     publishers {
         downstreamParameterized {
@@ -55,25 +55,25 @@ job(testJobName) {
     parameters {
         stringParam('GITHUB_USERNAME', '', 'GITHUB_USERNAME')
         stringParam('version', '', 'version of the application')
-        stringParam('IMAGEID', '', 'The docker image to test')
+        stringParam('IMAGEID', '', 'The sudo docker image to test')
         stringParam('cid', '', 'The container ID')
     }
     steps {
         shell('''\
-                cid=$(docker ps --filter="name=testing-app" -q -a)
+                cid=$(sudo docker ps --filter="name=testing-app" -q -a)
                 if [ ! -z "$cid" ]
                 then
-                    docker rm -f testing-app
+                    sudo docker rm -f testing-app
                 fi
-                testing_cid=$(docker run -d -v maven-repo:/root/.m2 --name testing-app -p 8080:8079  $IMAGEID mvn jetty:run)
+                testing_cid=$(sudo docker run -d -v maven-repo:/root/.m2 --name testing-app -p 8080:8079  $IMAGEID mvn jetty:run)
                 sleep 30
                 echo "testing_cid=$testing_cid" > props.env'''.stripIndent())
         environmentVariables {
             propertiesFile('props.env')
         }
         shell('''\
-                cip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${testing_cid})
-                docker run --rm rufus/siege-engine  -b -t60S http://$cip:8079/ > output 2>&1'''.stripIndent())
+                cip=$(sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${testing_cid})
+                sudo docker run --rm rufus/siege-engine  -b -t60S http://$cip:8079/ > output 2>&1'''.stripIndent())
         shell('''\
                 avail=$(cat output | grep Availability | awk '{print $2}')
                 echo $avail
@@ -81,7 +81,7 @@ job(testJobName) {
                 if [ "$avail" = "100.00" ]
                 then
 	                echo "Availability high enough"
-	                docker tag -f $IMAGEID ${GITHUB_USERNAME}/http-app:stable
+	                sudo docker tag -f $IMAGEID ${GITHUB_USERNAME}/http-app:stable
 	                exit 0
                 else
 	                echo "Availability too low"
@@ -110,19 +110,19 @@ job(releaseJobName) {
     }
     steps {
         shell('''\
-                docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:latest
-                docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:$VERSION
+                sudo sudo docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:latest
+                sudo sudo docker tag -f ${GITHUB_USERNAME}/http-app:stable ${GITHUB_USERNAME}/http-app:$VERSION
                 # no git here yet
-                # docker tag http-app/http-app:$(git describe)
-                cid=$(docker ps --filter="name=deploy-app" -q -a)
+                # sudo sudo docker tag http-app/http-app:$(git describe)
+                cid=$(sudo sudo docker ps --filter="name=deploy-app" -q -a)
                 if [ ! -z "$cid" ]
                 then
-                    docker rm -f deploy-app
+                    sudo sudo docker rm -f deploy-app
                 fi
-                docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8000 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
-        shell('''\
-                docker ps |grep ${GITHUB_USERNAME}/http-app
-                docker images |grep ${GITHUB_USERNAME}/http-app'''.stripIndent())
+                sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8000 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
+        shell('''
+                sudo docker ps |grep ${GITHUB_USERNAME}/http-app
+                sudo docker images |grep ${GITHUB_USERNAME}/http-app'''.stripIndent())
     }
 }
 
