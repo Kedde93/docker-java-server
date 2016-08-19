@@ -126,7 +126,7 @@ job(releaseJobName) {
                     sudo docker stop $cid
                     sudo sudo docker rm -f deploy-app
                 fi
-                sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8080 ${GITHUB_USERNAME}/http-app:latest'''.stripIndent())
+                sudo sudo docker run -d --name deploy-app -v maven-repo:/root/.m2 -p 8080:8080 ${GITHUB_USERNAME}/http-app:latest mvn jetty:run'''.stripIndent())
         shell('''
                 sudo docker ps |grep ${GITHUB_USERNAME}/http-app
                 sudo docker images |grep ${GITHUB_USERNAME}/http-app'''.stripIndent())
