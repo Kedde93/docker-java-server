@@ -25,7 +25,7 @@ job(buildJobName) {
                 sudo docker rm -f testing-app
             fi
 
-            cid=$(sudo docker run -d --name testing-app -v maven-repo:/root/.m2 -p 8080:8001 ${GITHUB_USERNAME}/http-app:snapshot mvn jetty:run) 
+            cid=$(sudo docker run -d --name testing-app -v maven-repo:/root/.m2 -p 8001:8080 ${GITHUB_USERNAME}/http-app:snapshot mvn jetty:run) 
             echo "cid=$cid" >> props.env
             echo "IMAGEID=$imageid" >> props.env
             cat props.env
